@@ -1,0 +1,54 @@
+backend/
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── routes/
+│   │   │   ├── __init__.py
+│   │   │   ├── auth.py
+│   │   │   ├── users.py
+│   │   │   ├── devices.py
+│   │   │   ├── alerts.py
+│   │   │   └── password_resets.py
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   └── security.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── device.py
+│   │   ├── alert.py
+│   │   └── password_reset.py
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── device.py
+│   │   ├── alert.py
+│   │   └── password_reset.py
+│   ├── crud/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── device.py
+│   │   ├── alert.py
+│   │   └── password_reset.py
+│   ├── db/
+│   │   ├── __init__.py
+│   │   ├── base.py
+│   │   ├── session.py
+│   │   └── init_db.py
+│   └── utils/
+│       ├── __init__.py
+│       ├── email.py
+│       ├── sms.py
+│       └── sound.py
+├── tests/
+│   ├── __init__.py
+│   ├── test_auth.py
+│   ├── test_users.py
+│   ├── test_devices.py
+│   ├── test_alerts.py
+│   └── test_password_resets.py
+├── requirements.txt
+└── README.md 
