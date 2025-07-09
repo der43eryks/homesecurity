@@ -44,7 +44,7 @@ app.use((err, req, res, next) => {
 })
 
 const PORT = process.env.PORT || 4000
-const HOST = process.env.BACKEND_HOST || '192.168.137.64';
+const HOST = process.env.BACKEND_HOST || '0.0.0.0';
 app.listen(PORT, HOST, () => {
   console.log(`Server running on http://${HOST}:${PORT}`)
 }) 

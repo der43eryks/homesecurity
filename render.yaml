@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: homesecurity-backend
+    runtime: node
+    plan: free
+    buildCommand: cd app && npm install
+    startCommand: cd app && node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_PORT
+        value: 3306
+      - key: JWT_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        value: https://your-frontend-url.onrender.com
+      - key: BACKEND_HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000 
