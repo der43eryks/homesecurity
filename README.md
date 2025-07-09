@@ -11,7 +11,7 @@ A comprehensive backend API for a smart home security system that manages user a
 
 - **User Authentication**: Secure login with email, password, and device ID
 - **Device Management**: Real-time device status monitoring
-- **Alert System**: Email, SMS, and sound notifications
+- **Alert System**: Email, SMS (via Africa's Talking), and sound notifications
 - **Password Reset**: Secure password reset via email/SMS
 - **Real-time Updates**: Server-Sent Events (SSE) for live notifications
 - **Profile Management**: User profile and device information management
@@ -23,7 +23,7 @@ A comprehensive backend API for a smart home security system that manages user a
 - **Authentication**: JWT with HTTP-only cookies
 - **Real-time**: Server-Sent Events (SSE)
 - **Email**: Nodemailer
-- **SMS**: Daraja API (Safaricom)
+- **SMS**: Africa's Talking SMS API
 - **Deployment**: Render
 
 ## 📚 API Documentation
@@ -76,6 +76,9 @@ A comprehensive backend API for a smart home security system that manages user a
    FRONTEND_URL=https://your-frontend-url.onrender.com
    BACKEND_HOST=0.0.0.0
    PORT=10000
+   AT_API_KEY=your_africas_talking_api_key
+   AT_USERNAME=your_africas_talking_username
+   AT_SENDER_ID=your_sender_id # optional
    ```
 
 4. **Build & Deploy Settings**
@@ -120,6 +123,9 @@ A comprehensive backend API for a smart home security system that manages user a
    FRONTEND_URL=http://localhost:3000
    BACKEND_HOST=0.0.0.0
    PORT=4000
+   AT_API_KEY=your_africas_talking_api_key
+   AT_USERNAME=your_africas_talking_username
+   AT_SENDER_ID=your_sender_id # optional
    ```
 
 4. **Set up the database**
@@ -162,6 +168,9 @@ The application uses the following MySQL tables:
 | `FRONTEND_URL` | Frontend application URL | Yes |
 | `BACKEND_HOST` | Backend host binding | No (default: 0.0.0.0) |
 | `PORT` | Backend server port | No (default: 4000) |
+| `AT_API_KEY` | Africa's Talking API key | Yes |
+| `AT_USERNAME` | Africa's Talking username | Yes |
+| `AT_SENDER_ID` | Africa's Talking sender ID (optional) | No |
 
 ## 🔒 Security Features
 
@@ -194,3 +203,4 @@ For support, email dericks43e@gmail.com or create an issue in the GitHub reposit
 - **v1.1.0**: Added real-time notifications via SSE
 - **v1.2.0**: Added password reset functionality
 - **v1.3.0**: Deployed to Render with cloud database support
+- **v1.4.0**: Switched SMS integration to Africa's Talking
