@@ -2,6 +2,8 @@
 
 A comprehensive backend API for a smart home security system that manages user authentication, device monitoring, alerts, and real-time notifications.
 
+**Note:** The backend code now resides exclusively in the `app` directory. The old `backend` folder has been removed for clarity and to save storage. All development, deployment, and configuration should reference the `app` directory only.
+
 ## 🚀 Live Demo
 
 - **Backend API**: [https://homesecurity-backend.onrender.com](https://homesecurity-backend.onrender.com)
@@ -18,7 +20,7 @@ A comprehensive backend API for a smart home security system that manages user a
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Node.js, Express.js
+- **Backend**: Node.js, Express.js (in `app/`)
 - **Database**: PostgreSQL (via Render)
 - **Authentication**: JWT with HTTP-only cookies
 - **Real-time**: Server-Sent Events (SSE)
@@ -204,3 +206,4 @@ For support, email dericks43e@gmail.com or create an issue in the GitHub reposit
 - **v1.3.0**: Deployed to Render with cloud database support
 - **v1.4.0**: Switched SMS integration to Africa's Talking
 - **v2.0.0**: Migrated backend and all queries to PostgreSQL
+- **v2.1.0**: Removed old backend folder, now using only app/ for backend
