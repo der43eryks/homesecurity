@@ -35,6 +35,29 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(morgan('combined'))
 
+// Health check endpoint
+app.get('/api/health', async (req, res) => {
+  try {
+    // Test database connection
+    const dbResult = await sql`SELECT NOW() as timestamp, 'OK' as status`
+    
+    res.json({
+      status: 'OK',
+      timestamp: dbResult[0].timestamp,
+      database: 'connected',
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development'
+    })
+  } catch (error) {
+    console.error('Health check failed:', error)
+    res.status(503).json({
+      status: 'ERROR',
+      error: 'Database connection failed',
+      timestamp: new Date().toISOString()
+    })
+  }
+})
+
 // API routes (modular)
 app.use('/api/auth', require('./api/auth'))
 app.use('/api/users', require('./api/users'))
