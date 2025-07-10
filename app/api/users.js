@@ -11,10 +11,12 @@ const router = express.Router()
 router.get('/me', authenticate, async (req, res) => {
   try {
     // Get user
-    const [users] = await db.promise().query('SELECT id, email, phone FROM users WHERE id = ?', [req.user.user_id])
+    const userResult = await db.query('SELECT id, email, phone FROM users WHERE id = $1', [req.user.user_id])
+    const users = userResult.rows
     if (!users.length) return res.status(404).json({ error: 'User not found' })
     // Get device
-    const [devices] = await db.promise().query('SELECT device_id, name, model, location, status, last_seen FROM devices WHERE id = ?', [req.user.device_id])
+    const deviceResult = await db.query('SELECT device_id, name, model, location, status, last_seen FROM devices WHERE id = $1', [req.user.device_id])
+    const devices = deviceResult.rows
     if (!devices.length) return res.status(404).json({ error: 'Device not found' })
     res.json({
       email: users[0].email,
@@ -42,7 +44,7 @@ router.put('/email', authenticate, [
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
   const { email } = req.body
   try {
-    await db.promise().query('UPDATE users SET email = ? WHERE id = ?', [email, req.user.user_id])
+    await db.query('UPDATE users SET email = $1 WHERE id = $2', [email, req.user.user_id])
     res.json({ message: 'Email updated' })
   } catch (err) {
     console.error(err)
@@ -60,12 +62,13 @@ router.put('/password', authenticate, [
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
   const { old_password, new_password } = req.body
   try {
-    const [users] = await db.promise().query('SELECT password_hash FROM users WHERE id = ?', [req.user.user_id])
+    const userResult = await db.query('SELECT password_hash FROM users WHERE id = $1', [req.user.user_id])
+    const users = userResult.rows
     if (!users.length) return res.status(404).json({ error: 'User not found' })
     const valid = await bcrypt.compare(old_password, users[0].password_hash)
     if (!valid) return res.status(401).json({ error: 'Old password incorrect' })
     const hash = await bcrypt.hash(new_password, 10)
-    await db.promise().query('UPDATE users SET password_hash = ? WHERE id = ?', [hash, req.user.user_id])
+    await db.query('UPDATE users SET password_hash = $1 WHERE id = $2', [hash, req.user.user_id])
     res.json({ message: 'Password updated, please log in again' })
   } catch (err) {
     console.error(err)
@@ -81,7 +84,7 @@ router.put('/phone', authenticate, [
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
   const { phone } = req.body
   try {
-    await db.promise().query('UPDATE users SET phone = ? WHERE id = ?', [phone, req.user.user_id])
+    await db.query('UPDATE users SET phone = $1 WHERE id = $2', [phone, req.user.user_id])
     res.json({ message: 'Phone number updated' })
   } catch (err) {
     console.error(err)

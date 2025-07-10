@@ -7,7 +7,8 @@ const router = express.Router()
 // GET /api/devices/me
 router.get('/me', authenticate, async (req, res) => {
   try {
-    const [devices] = await db.promise().query('SELECT device_id, name, model, location, status, last_seen FROM devices WHERE id = ?', [req.user.device_id])
+    const deviceResult = await db.query('SELECT device_id, name, model, location, status, last_seen FROM devices WHERE id = $1', [req.user.device_id])
+    const devices = deviceResult.rows
     if (!devices.length) return res.status(404).json({ error: 'Device not found' })
     res.json(devices[0])
   } catch (err) {
@@ -19,7 +20,8 @@ router.get('/me', authenticate, async (req, res) => {
 // GET /api/devices/status
 router.get('/status', authenticate, async (req, res) => {
   try {
-    const [devices] = await db.promise().query('SELECT status FROM devices WHERE id = ?', [req.user.device_id])
+    const deviceResult = await db.query('SELECT status FROM devices WHERE id = $1', [req.user.device_id])
+    const devices = deviceResult.rows
     if (!devices.length) return res.status(404).json({ error: 'Device not found' })
     res.json({ status: devices[0].status })
   } catch (err) {
