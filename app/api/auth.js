@@ -17,21 +17,18 @@ router.post('/login', [
 
   const { email, password, device_id } = req.body
   try {
-    // Get user
-    const userResult = await db.query('SELECT * FROM users WHERE email = $1', [email])
-    const users = userResult.rows
+    // Get user (Neon returns array directly)
+    const users = await db`SELECT * FROM users WHERE email = ${email}`
     if (!users.length) return res.status(401).json({ error: 'Invalid credentials' })
     const user = users[0]
     if (!user.is_active) return res.status(403).json({ error: 'Account disabled' })
 
     // Check device
-    const deviceResult = await db.query('SELECT * FROM devices WHERE device_id = $1', [device_id])
-    const devices = deviceResult.rows
+    const devices = await db`SELECT * FROM devices WHERE device_id = ${device_id}`
     if (!devices.length) return res.status(401).json({ error: 'Invalid device' })
 
     // Check user-device mapping
-    const userDeviceResult = await db.query('SELECT * FROM user_devices WHERE user_id = $1 AND device_id = $2', [user.id, devices[0].id])
-    const userDevices = userDeviceResult.rows
+    const userDevices = await db`SELECT * FROM user_devices WHERE user_id = ${user.id} AND device_id = ${devices[0].id}`
     if (!userDevices.length) return res.status(401).json({ error: 'User not authorized for this device' })
 
     // Check password
