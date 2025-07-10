@@ -1,6 +1,7 @@
 # API Endpoints
 
 > **Note:** The backend expects MySQL to be running on port **3307** by default. Set `DB_PORT=3307` in your `.env` file if your MySQL server uses this port.
+> **Backend Base URL:** http://192.168.137.231:4000
 
 ## Authentication
 | Endpoint                | Method | Description                        | Request Body Fields                | Auth Required |

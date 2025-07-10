@@ -6,7 +6,7 @@ const helmet = require('helmet')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
 const path = require('path')
-
+const pool=require("./db")
 const { router: sseRouter } = require('./api/sse')
 
 const app = express()
@@ -44,7 +44,16 @@ app.use((err, req, res, next) => {
 })
 
 const PORT = process.env.PORT || 4000
-const HOST = process.env.BACKEND_HOST || '0.0.0.0';
-app.listen(PORT, HOST, () => {
-  console.log(`Server running on http://${HOST}:${PORT}`)
-}) 
+
+app.listen(PORT, async () => {
+  try {
+    // Test the PostgreSQL connection
+    const res = await pool.query('SELECT NOW()')
+    console.log('Database connected at:', res.rows[0].now)
+    
+    console.log(`Server running on port ${PORT}`)
+  } catch (error) {
+    console.error('Failed to connect to the database:', error)
+    process.exit(1)
+  }
+})

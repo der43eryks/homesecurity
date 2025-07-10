@@ -5,7 +5,7 @@ By default, the backend connects to MySQL on port **3307**. If your MySQL server
 Example `.env`:
 
 ```
-DB_HOST=localhost
+DB_HOST=192.168.137.231
 DB_PORT=3307
 DB_USER=your_mysql_user
 DB_PASSWORD=your_mysql_password
