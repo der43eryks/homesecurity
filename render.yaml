@@ -9,15 +9,15 @@ services:
       - key: NODE_ENV
         value: production
       - key: DB_HOST
-        sync: false
+        value: your-postgres-host
       - key: DB_USER
-        sync: false
+        value: your-postgres-username
       - key: DB_PASSWORD
-        sync: false
+        value: your-postgres-password
       - key: DB_NAME
-        sync: false
+        value: your-postgres-dbname
       - key: DB_PORT
-        value: 3306
+        value: 5432
       - key: JWT_SECRET
         sync: false
       - key: FRONTEND_URL
@@ -26,3 +26,4 @@ services:
         value: 0.0.0.0
       - key: PORT
         value: 10000 
+      
