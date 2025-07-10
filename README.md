@@ -19,7 +19,7 @@ A comprehensive backend API for a smart home security system that manages user a
 ## 🛠️ Tech Stack
 
 - **Backend**: Node.js, Express.js
-- **Database**: MySQL
+- **Database**: PostgreSQL (via Render)
 - **Authentication**: JWT with HTTP-only cookies
 - **Real-time**: Server-Sent Events (SSE)
 - **Email**: Nodemailer
@@ -36,6 +36,7 @@ A comprehensive backend API for a smart home security system that manages user a
 - `GET /api/users/me` - Get user profile
 - `PUT /api/users/email` - Update email
 - `PUT /api/users/password` - Change password
+- `PUT /api/users/phone` - Update phone number
 
 ### Device Management
 - `GET /api/devices/me` - Get device info
@@ -67,11 +68,11 @@ A comprehensive backend API for a smart home security system that manages user a
 3. **Configure Environment Variables**
    Set these in your Render dashboard:
    ```
-   DB_HOST=your-mysql-host
-   DB_USER=your-mysql-user
-   DB_PASSWORD=your-mysql-password
-   DB_NAME=homesecurity
-   DB_PORT=3306
+   DB_HOST=your-postgres-host
+   DB_USER=your-postgres-username
+   DB_PASSWORD=your-postgres-password
+   DB_NAME=your-postgres-dbname
+   DB_PORT=5432
    JWT_SECRET=your-jwt-secret
    FRONTEND_URL=https://your-frontend-url.onrender.com
    BACKEND_HOST=0.0.0.0
@@ -87,14 +88,14 @@ A comprehensive backend API for a smart home security system that manages user a
    - **Environment**: Node
 
 5. **Database Setup**
-   - Use a cloud MySQL database (e.g., PlanetScale, Railway, or Render's MySQL)
-   - Run the SQL schema from `schema.sql` to create tables
+   - Use a cloud PostgreSQL database (e.g., Render PostgreSQL)
+   - Run the SQL schema from `schema.sql` to create tables (update types if needed for Postgres)
 
 ## 🏃‍♂️ Local Development
 
 ### Prerequisites
 - Node.js (v14 or higher)
-- MySQL (v8.0 or higher)
+- PostgreSQL (v12 or higher)
 - Git
 
 ### Setup
@@ -115,8 +116,8 @@ A comprehensive backend API for a smart home security system that manages user a
    Create `.env` file in the `app` directory:
    ```env
    DB_HOST=localhost
-   DB_PORT=3306
-   DB_USER=root
+   DB_PORT=5432
+   DB_USER=your_postgres_user
    DB_PASSWORD=your_password
    DB_NAME=homesecurity
    JWT_SECRET=your-secret-key
@@ -130,10 +131,8 @@ A comprehensive backend API for a smart home security system that manages user a
 
 4. **Set up the database**
    ```bash
-   mysql -u root -p
-   CREATE DATABASE homesecurity;
-   USE homesecurity;
-   # Run the SQL commands from schema.sql
+   psql -U your_postgres_user -d homesecurity
+   # Run the SQL commands from schema.sql (update types for Postgres if needed)
    ```
 
 5. **Start the server**
@@ -146,7 +145,7 @@ A comprehensive backend API for a smart home security system that manages user a
 
 ## 📊 Database Schema
 
-The application uses the following MySQL tables:
+The application uses the following PostgreSQL tables:
 - `users` - User accounts and authentication
 - `devices` - Device information and status
 - `user_devices` - User-device relationships
@@ -159,11 +158,11 @@ The application uses the following MySQL tables:
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `DB_HOST` | MySQL database host | Yes |
-| `DB_USER` | MySQL database user | Yes |
-| `DB_PASSWORD` | MySQL database password | Yes |
-| `DB_NAME` | MySQL database name | Yes |
-| `DB_PORT` | MySQL database port | No (default: 3306) |
+| `DB_HOST` | PostgreSQL database host | Yes |
+| `DB_USER` | PostgreSQL database user | Yes |
+| `DB_PASSWORD` | PostgreSQL database password | Yes |
+| `DB_NAME` | PostgreSQL database name | Yes |
+| `DB_PORT` | PostgreSQL database port | No (default: 5432) |
 | `JWT_SECRET` | Secret for JWT tokens | Yes |
 | `FRONTEND_URL` | Frontend application URL | Yes |
 | `BACKEND_HOST` | Backend host binding | No (default: 0.0.0.0) |
@@ -204,3 +203,4 @@ For support, email dericks43e@gmail.com or create an issue in the GitHub reposit
 - **v1.2.0**: Added password reset functionality
 - **v1.3.0**: Deployed to Render with cloud database support
 - **v1.4.0**: Switched SMS integration to Africa's Talking
+- **v2.0.0**: Migrated backend and all queries to PostgreSQL
