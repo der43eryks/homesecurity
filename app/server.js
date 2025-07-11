@@ -22,6 +22,7 @@ const allowedOrigins = process.env.FRONTEND_URLS
 
 app.use(cors({
   origin: function (origin, callback) {
+    // Allow requests with no origin (e.g., curl, Arduino, Postman)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
