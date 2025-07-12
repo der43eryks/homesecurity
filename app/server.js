@@ -18,7 +18,7 @@ app.use(compression())
 // CORS and parsing
 const allowedOrigins = process.env.FRONTEND_URLS
   ? process.env.FRONTEND_URLS.split(',')
-  : ['http://localhost:5173', 'http://localhost:5174'];
+  : ['http://localhost:5173', 'http://localhost:5174', 'https://homesec-ui1.vercel.app'];
 
 app.use(cors({
   origin: function (origin, callback) {
