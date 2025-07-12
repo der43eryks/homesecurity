@@ -18,7 +18,17 @@ app.use(compression())
 // CORS and parsing
 const allowedOrigins = process.env.FRONTEND_URLS
   ? process.env.FRONTEND_URLS.split(',')
-  : ['http://localhost:5173', 'http://localhost:5174', 'https://homesec-ui1.vercel.app'];
+  : ['http://localhost:5173', 'http://localhost:5174','http://localhost:5000'];
+
+// Add online client URL from environment variable
+if (process.env.ONLINE_CLIENT_RENDER) {
+  allowedOrigins.push(process.env.ONLINE_CLIENT_RENDER);
+}
+
+// Add Vercel frontend URL from environment variable
+if (process.env.VERCEL_FRONTEND_URL) {
+  allowedOrigins.push(process.env.VERCEL_FRONTEND_URL);
+}
 
 app.use(cors({
   origin: function (origin, callback) {
