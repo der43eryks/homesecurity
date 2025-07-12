@@ -8,20 +8,16 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: DB_HOST
-        value: your-postgres-host
-      - key: DB_USER
-        value: your-postgres-username
-      - key: DB_PASSWORD
-        value: your-postgres-password
-      - key: DB_NAME
-        value: your-postgres-dbname
-      - key: DB_PORT
-        value: 5432
+      - key: DATABASE_URL
+        value: your-neon-database-url-here
       - key: JWT_SECRET
-        sync: false
-      - key: FRONTEND_URL
-        value: https://your-frontend-url.onrender.com
+        value: DhoyM32VYlA317H6zlW9ex59RGSR6dfDlKEOfxJ+xeI=
+      - key: FRONTEND_URLS
+        value: http://localhost:5173,http://localhost:5174,http://localhost:5000
+      - key: ONLINE_CLIENT_RENDER
+        value: https://ui-flask-homesec.onrender.com
+      - key: VERCEL_FRONTEND_URL
+        value: https://homesec-ui1.vercel.app
       - key: BACKEND_HOST
         value: 0.0.0.0
       - key: PORT
