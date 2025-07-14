@@ -16,7 +16,7 @@ app.use(helmet())
 app.use(compression())
 
 // CORS and parsing
-const allowedOrigin = process.env.CORS_ALLOWED_ORIGINS;
+const allowedOrigin = process.env.CORS_ALLOWED_ORIGINS?.split(',');
 
 app.use(cors({
   origin: allowedOrigin,
