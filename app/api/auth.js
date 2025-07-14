@@ -6,6 +6,15 @@ const db = require('../db')
 
 const router = express.Router()
 
+// Simple in-memory rate limiter for login attempts (per email+IP)
+const loginAttempts = new Map();
+const MAX_ATTEMPTS = 5;
+const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+
+function getLoginKey(email, ip) {
+  return `${email.toLowerCase()}_${ip}`;
+}
+
 // POST /api/auth/login
 router.post('/login', [
   body('email').isEmail(),
@@ -17,29 +26,78 @@ router.post('/login', [
   const password = req.body.password ? req.body.password.trim() : ''
   const device_id = req.body.device_id ? req.body.device_id.trim() : ''
 
+  // Rate limiting logic
+  const ip = req.ip;
+  const key = getLoginKey(email, ip);
+  const now = Date.now();
+  let entry = loginAttempts.get(key);
+  if (entry && entry.count >= MAX_ATTEMPTS && now - entry.firstAttempt < WINDOW_MS) {
+    return res.status(429).json({ error: 'Login attempts reached, please try again later.' });
+  }
+
   const errors = validationResult(req)
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
 
   try {
     const users = await db`SELECT * FROM users WHERE email = ${email}`
-    if (!users.length) return res.status(401).json({ error: 'Invalid credentials' })
+    if (!users.length) {
+      // Increment failed attempt
+      if (!entry || now - entry.firstAttempt > WINDOW_MS) {
+        entry = { count: 1, firstAttempt: now };
+      } else {
+        entry.count++;
+      }
+      loginAttempts.set(key, entry);
+      return res.status(401).json({ error: 'Invalid credentials' })
+    }
     const user = users[0]
     if (!user.is_active) return res.status(403).json({ error: 'Account disabled' })
 
     // Check device
     const devices = await db`SELECT * FROM devices WHERE device_id = ${device_id}`
-    if (!devices.length) return res.status(401).json({ error: 'Invalid device, device not registered' })
+    if (!devices.length) {
+      // Increment failed attempt
+      if (!entry || now - entry.firstAttempt > WINDOW_MS) {
+        entry = { count: 1, firstAttempt: now };
+      } else {
+        entry.count++;
+      }
+      loginAttempts.set(key, entry);
+      return res.status(401).json({ error: 'Invalid device, device not registered' })
+    }
+    const device = devices[0];
 
     // Check user-device mapping
-    const userDevices = await db`SELECT * FROM user_devices WHERE user_id = ${user.id} AND device_id = ${devices[0].id}`
-    if (!userDevices.length) return res.status(401).json({ error: 'User not authorized for this device' })
+    const userDevices = await db`SELECT * FROM user_devices WHERE user_id = ${user.id} AND device_id = ${device.id}`
+    if (!userDevices.length) {
+      // Increment failed attempt
+      if (!entry || now - entry.firstAttempt > WINDOW_MS) {
+        entry = { count: 1, firstAttempt: now };
+      } else {
+        entry.count++;
+      }
+      loginAttempts.set(key, entry);
+      return res.status(401).json({ error: 'User not authorized for this device' })
+    }
 
     // Check password
     const valid = await bcrypt.compare(password, user.password_hash)
-    if (!valid) return res.status(401).json({ error: 'Invalid credentials' })
+    if (!valid) {
+      // Increment failed attempt
+      if (!entry || now - entry.firstAttempt > WINDOW_MS) {
+        entry = { count: 1, firstAttempt: now };
+      } else {
+        entry.count++;
+      }
+      loginAttempts.set(key, entry);
+      return res.status(401).json({ error: 'Invalid credentials' })
+    }
+
+    // On successful login, reset attempts
+    loginAttempts.delete(key);
 
     // JWT
-    const token = jwt.sign({ user_id: user.id, device_id: devices[0].id }, process.env.JWT_SECRET, { expiresIn: '12h' })
+    const token = jwt.sign({ user_id: user.id, device_id: device.id }, process.env.JWT_SECRET, { expiresIn: '12h' })
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
