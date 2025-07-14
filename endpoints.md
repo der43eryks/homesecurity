@@ -8,7 +8,7 @@
 |-------------------------|--------|------------------------------------|------------------------------------|--------------|
 | `/api/auth/login`       | POST   | Login with email, password, device | `email`, `password`, `device_id`   | No           |
 | `/api/auth/logout`      | POST   | Logout (clears auth cookie)        | None                               | No           |
-| `/api/auth/register`    | POST   | Register new user and device       | `email` (max 255), `password` (max 16), `model` (max 16), `device_id` (max 10), `name` (max 100), `phone` (max 10, optional) | No |
+| `/api/auth/register`    | POST   | Register new user and device       | `email` (max 255), `password` (max 16), `model` (max 16), `device_id` (max 10), `name` (max 20, letters, numbers, _ and - only), `phone` (max 10, optional) | No |
 
 ### Example Registration Request
 ```json
@@ -17,10 +17,12 @@
   "password": "mypassword",
   "model": "ESP32-SECURE",
   "device_id": "1234567890",
-  "name": "Living Room Sensor",
+  "name": "LivingRoom_1",
   "phone": "0712345678"
 }
 ```
+
+> **Note:** The `name` field must be at most 20 characters and may only contain letters, numbers, underscores (_), and hyphens (-).
 
 ### Example Registration Response
 ```json
@@ -28,7 +30,7 @@
   "message": "Registration successful",
   "user_id": "<uuid>",
   "device_id": "1234567890",
-  "device_name": "Living Room Sensor"
+  "device_name": "LivingRoom_1"
 }
 ```
 

@@ -66,7 +66,10 @@ router.post('/register', [
   body('password').isString().isLength({ max: 16 }),
   body('model').isString().isLength({ max: 16 }),
   body('device_id').isString().isLength({ max: 10 }),
-  body('name').isString().isLength({ max: 100 }),
+  body('name')
+    .isString()
+    .isLength({ max: 20 })
+    .matches(/^[A-Za-z0-9_-]+$/),
   body('phone').optional().isString().isLength({ max: 10 })
 ], async (req, res) => {
   const errors = validationResult(req)
@@ -74,9 +77,16 @@ router.post('/register', [
 
   const { email, password, model, device_id, name, phone } = req.body
   try {
-    // Defensive: enforce max lengths
-    if (password.length > 16 || model.length > 16 || device_id.length > 10 || name.length > 100 || (phone && phone.length > 10)) {
-      return res.status(400).json({ error: 'Field length exceeded' })
+    // Defensive: enforce max lengths and pattern
+    if (
+      password.length > 16 ||
+      model.length > 16 ||
+      device_id.length > 10 ||
+      name.length > 20 ||
+      !/^[A-Za-z0-9_-]+$/.test(name) ||
+      (phone && phone.length > 10)
+    ) {
+      return res.status(400).json({ error: 'Invalid or too long field value' })
     }
 
     // Hash password
