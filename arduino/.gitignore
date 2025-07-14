@@ -1,0 +1,25 @@
+# Arduino IDE files
+*.hex
+*.elf
+*.bin
+*.map
+
+# Arduino build folders
+build/
+*.o
+*.d
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+
+# This entire folder should not be tracked in git
+# as it contains hardware-specific code and credentials 

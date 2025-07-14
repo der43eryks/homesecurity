@@ -16,32 +16,12 @@ app.use(helmet())
 app.use(compression())
 
 // CORS and parsing
-const allowedOrigins = process.env.FRONTEND_URLS
-  ? process.env.FRONTEND_URLS.split(',')
-  : ['http://localhost:5173', 'http://localhost:5174','http://localhost:5000'];
-
-// Add online client URL from environment variable
-if (process.env.ONLINE_CLIENT_RENDER) {
-  allowedOrigins.push(process.env.ONLINE_CLIENT_RENDER);
-}
-
-// Add Vercel frontend URL from environment variable
-if (process.env.VERCEL_FRONTEND_URL) {
-  allowedOrigins.push(process.env.VERCEL_FRONTEND_URL);
-}
+const allowedOrigin = process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:10000';
 
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (e.g., curl, Arduino, Postman)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: allowedOrigin,
   credentials: true
-}))
+}));
 app.use(express.json())
 app.use(cookieParser())
 app.use(morgan('combined'))
