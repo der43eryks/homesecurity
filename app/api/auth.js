@@ -69,7 +69,7 @@ router.post('/register', [
   body('name')
     .isString()
     .isLength({ max: 20 })
-    .matches(/^[A-Za-z0-9_-]+$/),
+    .matches(/^[A-Za-z0-9 _-]+$/),
   body('phone').optional().isString().isLength({ max: 10 })
 ], async (req, res) => {
   const errors = validationResult(req)
@@ -83,7 +83,7 @@ router.post('/register', [
       model.length > 16 ||
       device_id.length > 10 ||
       name.length > 20 ||
-      !/^[A-Za-z0-9_-]+$/.test(name) ||
+      !/^[A-Za-z0-9 _-]+$/.test(name) ||
       (phone && phone.length > 10)
     ) {
       return res.status(400).json({ error: 'Invalid or too long field value' })
