@@ -78,47 +78,40 @@ router.post('/register', [
       return res.status(400).json({ error: 'Field length exceeded' })
     }
 
-    // Check for existing user
-    const users = await db`SELECT * FROM users WHERE email = ${email}`
-    let user_id
-    if (users.length) {
-      user_id = users[0].id
-    } else {
-      // Hash password
-      const password_hash = await bcrypt.hash(password, 12)
-      const newUser = await db`
+    // Hash password
+    const password_hash = await bcrypt.hash(password, 12)
+
+    // Use a single SQL statement with CTEs to insert user, device, and mapping atomically
+    const result = await db`
+      WITH ins_user AS (
         INSERT INTO users (email, password_hash, phone)
         VALUES (${email}, ${password_hash}, ${phone || null})
+        ON CONFLICT (email) DO UPDATE SET email=EXCLUDED.email
         RETURNING id
-      `
-      user_id = newUser[0].id
-    }
-
-    // Check for existing device
-    const devices = await db`SELECT * FROM devices WHERE device_id = ${device_id}`
-    let device_db_id
-    if (devices.length) {
-      device_db_id = devices[0].id
-    } else {
-      const newDevice = await db`
+      ),
+      ins_device AS (
         INSERT INTO devices (device_id, model)
         VALUES (${device_id}, ${model})
+        ON CONFLICT (device_id) DO UPDATE SET device_id=EXCLUDED.device_id
         RETURNING id
-      `
-      device_db_id = newDevice[0].id
-    }
-
-    // Link user to device if not already linked
-    const userDevice = await db`SELECT * FROM user_devices WHERE user_id = ${user_id} AND device_id = ${device_db_id}`
-    if (!userDevice.length) {
-      await db`
+      ),
+      ins_map AS (
         INSERT INTO user_devices (user_id, device_id)
-        VALUES (${user_id}, ${device_db_id})
-      `
+        SELECT ins_user.id, ins_device.id FROM ins_user, ins_device
+        ON CONFLICT (user_id, device_id) DO NOTHING
+        RETURNING user_id, device_id
+      )
+      SELECT ins_user.id AS user_id, ins_device.id AS device_id FROM ins_user, ins_device
+    `
+    if (!result.length) {
+      return res.status(500).json({ error: 'Registration failed' })
     }
-
-    res.status(201).json({ message: 'Registration successful', user_id, device_id })
+    res.status(201).json({ message: 'Registration successful', user_id: result[0].user_id, device_id: device_id })
   } catch (err) {
+    if (err.code === '23505') {
+      // Unique violation (should not happen due to ON CONFLICT, but just in case)
+      return res.status(409).json({ error: 'Email or device already registered' })
+    }
     console.error(err)
     res.status(500).json({ error: 'Server error' })
   }
