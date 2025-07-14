@@ -12,12 +12,15 @@ router.post('/login', [
   body('password').isString(),
   body('device_id').isString()
 ], async (req, res) => {
+  // Trim all string inputs
+  const email = req.body.email ? req.body.email.trim() : ''
+  const password = req.body.password ? req.body.password.trim() : ''
+  const device_id = req.body.device_id ? req.body.device_id.trim() : ''
+
   const errors = validationResult(req)
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
 
-  const { email, password, device_id } = req.body
   try {
-    // Get user (Neon returns array directly)
     const users = await db`SELECT * FROM users WHERE email = ${email}`
     if (!users.length) return res.status(401).json({ error: 'Invalid credentials' })
     const user = users[0]
@@ -25,7 +28,7 @@ router.post('/login', [
 
     // Check device
     const devices = await db`SELECT * FROM devices WHERE device_id = ${device_id}`
-    if (!devices.length) return res.status(401).json({ error: 'Invalid devicem, device not registered' })
+    if (!devices.length) return res.status(401).json({ error: 'Invalid device, device not registered' })
 
     // Check user-device mapping
     const userDevices = await db`SELECT * FROM user_devices WHERE user_id = ${user.id} AND device_id = ${devices[0].id}`
@@ -72,10 +75,17 @@ router.post('/register', [
     .matches(/^[A-Za-z0-9 _-]+$/),
   body('phone').optional().isString().isLength({ max: 10 })
 ], async (req, res) => {
+  // Trim all string inputs
+  const email = req.body.email ? req.body.email.trim() : ''
+  const password = req.body.password ? req.body.password.trim() : ''
+  const model = req.body.model ? req.body.model.trim() : ''
+  const device_id = req.body.device_id ? req.body.device_id.trim() : ''
+  const name = req.body.name ? req.body.name.trim() : ''
+  const phone = req.body.phone ? req.body.phone.trim() : ''
+
   const errors = validationResult(req)
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
 
-  const { email, password, model, device_id, name, phone } = req.body
   try {
     // Defensive: enforce max lengths and pattern
     if (
