@@ -16,7 +16,7 @@ app.use(helmet())
 app.use(compression())
 
 // CORS and parsing
-const allowedOrigin = process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:10000';
+const allowedOrigin = process.env.CORS_ALLOWED_ORIGINS;
 
 app.use(cors({
   origin: allowedOrigin,
@@ -81,3 +81,5 @@ app.listen(PORT, async () => {
     process.exit(1)
   }
 })
+
+ 

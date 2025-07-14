@@ -76,3 +76,41 @@ This file summarizes the frontend requirements and discussion for your Smart Sec
 3. **Sound Notification:** Should the user be able to mute/unmute this, or is it always on?
 4. **Email Editing:** Is email change instant, or does it require confirmation (e.g., via a code sent to the new email)?
 5. **Alerts:** Are email/SMS alerts always on, or can the user toggle them? 
+
+---
+
+# Registration Page Plan
+
+## HTML Form Fields
+- Email (required)
+- Password (required, min 8 chars)
+- Phone (optional)
+
+## Flask Route
+- GET /register: Render the registration form
+- POST /register: Validate form, send POST to backend /api/auth/register, handle response
+
+## Backend API
+- Endpoint: /api/auth/register (POST)
+- Request body: { email, password, phone }
+- Response: Success or error message
+
+## Template File
+- templates/register.html (to be created)
+
+## Example register.html
+```html
+<form method="post" action="/register">
+  <label>Email:</label>
+  <input type="email" name="email" required><br>
+  <label>Password:</label>
+  <input type="password" name="password" minlength="8" required><br>
+  <label>Phone (optional):</label>
+  <input type="text" name="phone"><br>
+  <button type="submit">Register</button>
+</form>
+```
+
+## Flask Logic (app.py)
+- On POST, collect form data, send to backend /api/auth/register using requests.post
+- Show success or error message to user 

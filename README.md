@@ -207,3 +207,18 @@ For support, email dericks43e@gmail.com or create an issue in the GitHub reposit
 - **v1.4.0**: Switched SMS integration to Africa's Talking
 - **v2.0.0**: Migrated backend and all queries to PostgreSQL
 - **v2.1.0**: Removed old backend folder, now using only app/ for backend
+
+# User Registration Feature
+
+A new user registration feature is being added:
+
+- **Backend:**
+  - POST /api/auth/register endpoint in app/api/auth.js
+  - Accepts email, password, and optional phone
+  - Validates input, hashes password, and creates user
+
+- **Frontend:**
+  - Registration form (templates/register.html) with fields: email, password, phone
+  - Flask route /register to render form and handle submission
+
+See `front end.md` and `project.md` for more details.
