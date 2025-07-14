@@ -66,15 +66,16 @@ router.post('/register', [
   body('password').isString().isLength({ max: 16 }),
   body('model').isString().isLength({ max: 16 }),
   body('device_id').isString().isLength({ max: 10 }),
+  body('name').isString().isLength({ max: 100 }),
   body('phone').optional().isString().isLength({ max: 10 })
 ], async (req, res) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
 
-  const { email, password, model, device_id, phone } = req.body
+  const { email, password, model, device_id, name, phone } = req.body
   try {
     // Defensive: enforce max lengths
-    if (password.length > 16 || model.length > 16 || device_id.length > 10 || (phone && phone.length > 10)) {
+    if (password.length > 16 || model.length > 16 || device_id.length > 10 || name.length > 100 || (phone && phone.length > 10)) {
       return res.status(400).json({ error: 'Field length exceeded' })
     }
 
@@ -90,10 +91,10 @@ router.post('/register', [
         RETURNING id
       ),
       ins_device AS (
-        INSERT INTO devices (device_id, model)
-        VALUES (${device_id}, ${model})
+        INSERT INTO devices (device_id, model, name)
+        VALUES (${device_id}, ${model}, ${name})
         ON CONFLICT (device_id) DO UPDATE SET device_id=EXCLUDED.device_id
-        RETURNING id
+        RETURNING id, name
       ),
       ins_map AS (
         INSERT INTO user_devices (user_id, device_id)
@@ -101,12 +102,12 @@ router.post('/register', [
         ON CONFLICT (user_id, device_id) DO NOTHING
         RETURNING user_id, device_id
       )
-      SELECT ins_user.id AS user_id, ins_device.id AS device_id FROM ins_user, ins_device
+      SELECT ins_user.id AS user_id, ins_device.id AS device_id, ins_device.name AS device_name FROM ins_user, ins_device
     `
     if (!result.length) {
       return res.status(500).json({ error: 'Registration failed' })
     }
-    res.status(201).json({ message: 'Registration successful', user_id: result[0].user_id, device_id: device_id })
+    res.status(201).json({ message: 'Registration successful', user_id: result[0].user_id, device_id: device_id, device_name: result[0].device_name })
   } catch (err) {
     if (err.code === '23505') {
       // Unique violation (should not happen due to ON CONFLICT, but just in case)
