@@ -25,7 +25,7 @@ router.post('/login', [
 
     // Check device
     const devices = await db`SELECT * FROM devices WHERE device_id = ${device_id}`
-    if (!devices.length) return res.status(401).json({ error: 'Invalid device' })
+    if (!devices.length) return res.status(401).json({ error: 'Invalid devicem, device not registered' })
 
     // Check user-device mapping
     const userDevices = await db`SELECT * FROM user_devices WHERE user_id = ${user.id} AND device_id = ${devices[0].id}`
@@ -87,6 +87,17 @@ router.post('/register', [
       (phone && phone.length > 10)
     ) {
       return res.status(400).json({ error: 'Invalid or too long field value' })
+    }
+
+    // Check if device_id is already registered
+    const existingDevice = await db`SELECT id FROM devices WHERE device_id = ${device_id}`
+    if (existingDevice.length) {
+      // Check if this device_id is already linked to a user
+      const device_db_id = existingDevice[0].id
+      const alreadyLinked = await db`SELECT * FROM user_devices WHERE device_id = ${device_db_id}`
+      if (alreadyLinked.length) {
+        return res.status(409).json({ error: 'Device ID is already registered to another user' })
+      }
     }
 
     // Hash password
