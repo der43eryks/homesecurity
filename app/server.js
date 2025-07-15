@@ -11,6 +11,11 @@ const { router: sseRouter } = require('./api/sse')
 
 const app = express()
 
+
+//cookie handler
+// (Removed incorrect app.cookie usage)
+
+
 // Security and performance middleware
 app.use(helmet())
 app.use(compression())

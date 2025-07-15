@@ -4,6 +4,7 @@
 module.exports = {
   AUTH_LOGIN: '/api/auth/login',
   AUTH_LOGOUT: '/api/auth/logout',
+  AUTH_REGISTER : 'api/auth/register',
 
   USERS_ME: '/api/users/me',
   USERS_EMAIL: '/api/users/email',

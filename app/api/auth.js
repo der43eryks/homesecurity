@@ -32,7 +32,7 @@ router.post('/login', [
   const now = Date.now();
   let entry = loginAttempts.get(key);
   if (entry && entry.count >= MAX_ATTEMPTS && now - entry.firstAttempt < WINDOW_MS) {
-    return res.status(429).json({ error: 'Login attempts reached, please try again later.' });
+    return res.status(429).json({ error: 'Max Login attempts reached, please try again later.' });
   }
 
   const errors = validationResult(req)
@@ -90,7 +90,7 @@ router.post('/login', [
         entry.count++;
       }
       loginAttempts.set(key, entry);
-      return res.status(401).json({ error: 'Invalid credentials' })
+      return res.status(401).json({ error: 'Wrong password or Invalid credentials' })
     }
 
     // On successful login, reset attempts
