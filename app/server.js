@@ -29,7 +29,11 @@ app.use(cors({
 }));
 app.use(express.json())
 app.use(cookieParser())
-app.use(morgan('combined'))
+app.use(morgan('combined', {
+  skip: function (req, res) {
+    return req.path === '/api/health';
+  }
+}))
 
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
